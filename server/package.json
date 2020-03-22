@@ -1,0 +1,25 @@
+{
+  "name": "gardeningapp",
+  "version": "1.0.0",
+  "description": "Server for gardening app. TEAM 1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HofstraDSC/GardeningApplication.git"
+  },
+  "author": "Hofstra DSC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HofstraDSC/GardeningApplication/issues"
+  },
+  "homepage": "https://github.com/HofstraDSC/GardeningApplication#readme",
+  "dependencies": {
+    "body-parser": "*",
+    "cookie-parser": "^1.4.1",
+    "express": "*",
+    "promise-mysql": "^4.1.3"
+  }
+}

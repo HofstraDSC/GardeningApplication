@@ -7,7 +7,9 @@ let plantRouter = express.Router();
 const plantModel = require('../models/plant.js');
 
 plantRouter.get('/all',plantModel.getAll);
-plantRouter.post('/register',plantModel.register); 
+plantRouter.post('/removePlant',plantModel.removePlant); 
+plantRouter.post('/addPlant',plantModel.registerPlant);
+plantRouter.post('/harvest',plantModel.removeUserPlant);
 	//local mysql db connectionS
 	
 	// console.log('plant');

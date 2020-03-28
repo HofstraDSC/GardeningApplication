@@ -16,12 +16,33 @@ plants.getAll = async (req, res) => {
 }
 
 plants.removePlant = async (req, res) => {
-	const query = `DELETE FROM \`default\`.plants WHERE PlantId=${req.body['plantId']};`;
-	try {
+	let query = `SELECT PlantId, PlantName, PlantType, WaterFreq, WaterNeeded
+	FROM \`default\`.plants WHERE PlantId = ${req.body['plantId']}`;
+	try{
 		let data = await sql.con.query(query);
-		res.json("Success");
+		if(data.length){
+			query = `DELETE FROM \`default\`.userplants
+			WHERE PlantId = ${req.body['plantId']}`;
+			try{
+				await sql.con.query(query);
+			}
+			catch (err) { console.log(err) }
+			query = `DELETE FROM \`default\`.plants WHERE PlantId=${req.body['plantId']};`;
+			try {
+				let data = await sql.con.query(query);
+				res.json("Success");
+			}
+			catch (err) { console.log(err) }
+		}
+		else{
+			res.json("There is no plant with that plantId. Please try again with a different Id.")
+		}
 	}
 	catch (err) { console.log(err) }
+
+
+
+	
 }
 
 plants.registerPlant = async (req, res) => {
@@ -51,7 +72,7 @@ plants.registerPlant = async (req, res) => {
 }
 
 plants.removeUserPlant = async (req, res) => {
-	const query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD 
+	query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD 
 	FROM \`default\`.userplants 
 	WHERE UserId=${req.body['userId']}
 	AND PosX=${req.body['posX']}
@@ -59,7 +80,7 @@ plants.removeUserPlant = async (req, res) => {
 	try {
 		let data = await sql.con.query(query);
 		if (data.length) {
-			const query = `DELETE FROM \`default\`.userplants 
+			query = `DELETE FROM \`default\`.userplants 
 			WHERE UserId=${req.body['userId']} 
 			AND PosX=${req.body['posX']} 
 			AND PosY=${req.body['posY']};`;

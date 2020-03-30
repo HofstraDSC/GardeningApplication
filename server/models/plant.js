@@ -8,7 +8,7 @@ const plants = {};
 plants.getAll = async (req, res) => {
 	const query = "SELECT * FROM `default`.plants";
 	try {
-		let data = await sql.con.query(query);
+		const data = await sql.con.query(query);
 		console.log(data[0]);
 		console.log(data);
 		res.json({ plants: data });
@@ -43,9 +43,9 @@ plants.removePlant = async (req, res) => {
 }
 
 plants.registerPlant = async (req, res) => {
-	let query = `SELECT UserId, PlantId, PosX, PosY, LastWatered 
-	FROM \`default\`.userplants 
-	WHERE PosX = ${req.body['posX']} 
+	let query = `SELECT UserId, PlantId, PosX, PosY, LastWatered
+	FROM \`default\`.userplants
+	WHERE PosX = ${req.body['posX']}
 	AND PosY = ${req.body['posY']};`;
 	console.log(validatePlant(req.body['plantId']))
 	const validPlantId =  await validatePlant(req.body['plantId']);
@@ -53,9 +53,9 @@ plants.registerPlant = async (req, res) => {
 	if(validPlantId){
 		try {
 			let data = await sql.con.query(query);
-		
+
 			if(!data.length) {
-				query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered) 
+				query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered)
 				VALUES(\'${req.body['userId']}\', ${req.body['plantId']}, ${req.body['posX']}, ${req.body['posY']}, \'${req.body['lastWatered']}\');`;
 				try {
 					data = await sql.con.query(query);
@@ -75,17 +75,17 @@ plants.registerPlant = async (req, res) => {
 }
 
 plants.removeUserPlant = async (req, res) => {
-	query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD 
-	FROM \`default\`.userplants 
+	query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD
+	FROM \`default\`.userplants
 	WHERE UserId=${req.body['userId']}
 	AND PosX=${req.body['posX']}
 	AND PosY=${req.body['posY']}`;
 	try {
 		let data = await sql.con.query(query);
 		if (data.length) {
-			query = `DELETE FROM \`default\`.userplants 
-			WHERE UserId=${req.body['userId']} 
-			AND PosX=${req.body['posX']} 
+			query = `DELETE FROM \`default\`.userplants
+			WHERE UserId=${req.body['userId']}
+			AND PosX=${req.body['posX']}
 			AND PosY=${req.body['posY']};`;
 			try {
 				let data = await sql.con.query(query);
@@ -112,7 +112,7 @@ async function validatePlant(plantId){
 		else return false;
 	}
 	catch( err ) {console.log(err) }
-	
+
 }
 
 

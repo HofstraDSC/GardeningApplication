@@ -10,6 +10,7 @@ plants.getAll = async (req, res) => {
 	try {
 		let data = await sql.con.query(query);
 		console.log(data[0]);
+		console.log(data);
 		res.json({ plants: data });
 	}
 	catch (err) { console.log(err) }
@@ -39,36 +40,38 @@ plants.removePlant = async (req, res) => {
 		}
 	}
 	catch (err) { console.log(err) }
-
-
-
-	
 }
 
 plants.registerPlant = async (req, res) => {
-	const query = `SELECT UserId, PlantId, PosX, PosY, LastWatered 
+	let query = `SELECT UserId, PlantId, PosX, PosY, LastWatered 
 	FROM \`default\`.userplants 
 	WHERE PosX = ${req.body['posX']} 
 	AND PosY = ${req.body['posY']};`;
-	try {
-		let data = await sql.con.query(query);
-		console.log(data.length);
-		console.log(data);
-		if (!data.length) {
-			const query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered) 
-			VALUES(\'${req.body['userId']}\', ${req.body['plantId']}, ${req.body['posX']}, ${req.body['posY']}, \'${req.body['lastWatered']}\');`;
-			try {
-				let data = await sql.con.query(query);
-				res.json("Success");
+	console.log(validatePlant(req.body['plantId']))
+	const validPlantId =  await validatePlant(req.body['plantId']);
+	console.log("Valid Plant Id: "+ validPlantId);
+	if(validPlantId){
+		try {
+			let data = await sql.con.query(query);
+		
+			if(!data.length) {
+				query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered) 
+				VALUES(\'${req.body['userId']}\', ${req.body['plantId']}, ${req.body['posX']}, ${req.body['posY']}, \'${req.body['lastWatered']}\');`;
+				try {
+					data = await sql.con.query(query);
+					res.json("Success");
+				}
+				catch (err) { console.log(err) }
 			}
-			catch (err) { console.log(err) }
+			else {
+				res.json("Plant already exists at the location specified.  Please select a new X and/or Y value(s).");
+			}
 		}
-		else {
-			res.json("Plant already exists at the location specified.  Please select a new X and/or Y value(s).");
-		}
+		catch (err) { console.log(err) }
 	}
-	catch (err) { console.log(err) }
-
+	else{
+		res.json("Plant Id is not valid please select another Id that is valid.")
+	}
 }
 
 plants.removeUserPlant = async (req, res) => {
@@ -93,9 +96,22 @@ plants.removeUserPlant = async (req, res) => {
 		else{
 			res.json("There is no plant at this location. Please make sure the location entered is correct.")
 		}
-
 	}
 	catch(err) { console.log(err) }
+}
+
+async function validatePlant(plantId){
+	const query = `SELECT *
+	FROM \`default\`.plants
+	WHERE PlantId = ${plantId};`;
+	try{
+		const data = await sql.con.query(query);
+		console.log("Data Length: " + data.length);
+		console.log("Data: " + data);
+		if(data.length) return true;
+		else return false;
+	}
+	catch( err ) {console.log(err) }
 	
 }
 

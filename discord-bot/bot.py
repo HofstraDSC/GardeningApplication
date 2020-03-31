@@ -9,6 +9,7 @@ import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import requests
+from datetime import datetime 
 
 load_dotenv();
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -19,7 +20,7 @@ greg_id = 219987051376803841
 
 @bot.event
 async def on_ready():
-    #water.start() 
+    #needs_water.start() 
     guild = discord.utils.get(bot.guilds, name=GUILD)
     members = '\n - '.join([member.name for member in guild.members])
     channels = guild.channels
@@ -35,6 +36,7 @@ async def on_ready():
 
 # Information generate in the on_ready does not persist. Have to get it within function
 # and everything. Global ones do persist.
+"""
 @tasks.loop(seconds=5)
 async def water():
     guild = discord.utils.get(bot.guilds, name=GUILD)
@@ -43,43 +45,68 @@ async def water():
     if user.dm_channel == None:
         await user.create_dm() 
     await user.dm_channel.send('Water Plant X')
+"""
+@tasks.loop(seconds = 10)
+async def needs_water():
+    guild = discord.utils.get(bot.guilds, name=GUILD)
+    discord_user = guild.get_member(greg_id)
+    await discord_user.create_dm()
+    
+    plant_url = 'http://localhost:3000/plant/all'
+    user_url = 'http://localhost:3000/user/hasGarden'
+    
+    # sending get request and saving the response as response object 
+    
+    plant_request = requests.get(url = plant_url)
+    user_request = requests.get(url = user_url)
+    # extracting data in json format 
+    plant_data_db = plant_request.json()
+    plant_data_db = plant_data_db['plants']
+    user_data = user_request.json()
+    
+    for user in user_data['users']:
+        #retrieve the user's garden
+        user_garden_request = 'http://localhost:3000/user/myGarden/' + str(user['UserId'])
+        user_garden = requests.get(url = user_garden_request)
+        user_garden_data = user_garden.json()
 
+        #Go through the user's garden
+        garden = user_garden_data['myGarden']
+        for plant_in_garden in garden:
+            plant_in_garden_id = plant_in_garden['PlantId']
+            plant_in_garden_info = None
+
+            for plant_db in plant_data_db:
+                if(plant_db["PlantId"] == plant_in_garden_id):
+                    plant_in_garden_info = plant_db
+                    break;
+                
+            last_watered = plant_in_garden['LastWatered'][:-1]
+            #await discord_user.dm_channel.send(last_watered)
+            last_watered_date = datetime.fromisoformat(last_watered)
+            current_time = datetime.now()
+            delta = current_time - last_watered_date
+            hours = delta.days * 24
+            if(plant_in_garden_info["WaterFreq"] <= hours):
+                await discord_user.dm_channel.send(str(user['UserId']) + " Water your " + plant_in_garden_info["PlantName"] + " at (" + str(plant_in_garden['PosX']) + "," + str(plant_in_garden['PosY']) + ")") 
+            #await discord_user.dm_channel.send(current_time-last_watered_date)
+            
 @bot.command()
 async def test(ctx):
     await ctx.send("test")
-    
-@bot.command(name='request')
-async def request(ctx):
-    user = ctx.author
-    URL = 'http://localhost:3000/user/myGarden/22'
-    plant_url = 'http://localhost:3000/plant/all'
-    plant_request = requests.get(url = plant_url)
-    #PARAMS = {'address':location}
-    await user.create_dm()
-    # sending get request and saving the response as response object 
-    r = requests.get(url = URL) 
-  
-    # extracting data in json format 
-    data = r.json()
-    plant_data = plant_request.json()
-    
-    garden = data['myGarden']
-    num_plants = len(data['myGarden'])
-    for i in range(num_plants):
-        curr_plant = garden[i]['PlantId']
         
-        #for plant in plant_data:
-            #if curr_plant == plant[0]['PlantId']:
-                #await user.dm_channel.send(plant)
-
-    await user.dm_channel.send(plant_data['plants'])
-    await user.dm_channel.send(data)
-    await user.dm_channel.send(num_plants)
     
-@bot.command(name='plant', help='Should return a message to the user thanking them')
-async def plant(ctx):
-    response = 'Thank you ' + str(ctx.author) + ' for using the plant command'
-    await ctx.send(response)
+@bot.command(name='getAllPlants', help='Should return a message to the user thanking them')
+async def getAllPlants(ctx):
+    URL = "http://localhost:3000/plant/all"
+    r = requests.get(url=URL)
+    data = r.json()["plants"]
+
+    user = ctx.author
+    await user.create_dm()
+    for plant in data:
+        await user.dm_channel.send("ID: " + str(plant["PlantId"]) +"     Name: "+ plant["PlantName"] +"\n\t Type: "+ plant["PlantType"] +" \n\t Water Frequency: "+ str(plant["WaterFreq"]) +"\n\t Water needed: "+ str(plant["WaterNeeded"])+"\n")
+    
 
 @bot.command(name='stop')
 async def log_out(ctx):

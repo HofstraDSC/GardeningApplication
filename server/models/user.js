@@ -40,4 +40,13 @@ users.myGarden = async (req,res) =>{
 	catch (err) {console.log(err)}
 }
 
+users.hasGarden = async (req,res) =>{
+	const query = "SELECT DISTINCT(UserId) FROM \`default\`.userplants;";
+	try{
+		const data = await sql.con.query(query);
+		res.json( { users : data } );
+	}
+	catch (err) {console.log(err)}
+}
+
 module.exports = users;

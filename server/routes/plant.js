@@ -10,6 +10,6 @@ plantRouter.get('/all',plantModel.getAll);
 plantRouter.post('/removePlant',plantModel.removePlant); 
 plantRouter.post('/addPlant',plantModel.registerPlant);
 plantRouter.post('/harvest',plantModel.removeUserPlant);
-
+plantRouter.post('/updateWater',plantModel.updateWater);
 
 module.exports = plantRouter;

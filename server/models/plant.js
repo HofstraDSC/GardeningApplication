@@ -100,6 +100,22 @@ plants.removeUserPlant = async (req, res) => {
 	catch(err) { console.log(err) }
 }
 
+plants.updateWater = async ( req, res ) => {
+	let query = `UPDATE \`default\`.userplants
+	SET LastWatered=\'${req.body['time']}\'
+	WHERE UserId=${req.body['userId']} AND PosX=${req.body['posX']} AND PosY=${req.body['posY']};`;
+	try{
+		await sql.con.query(query);
+		res.json("Success")
+	}
+	catch( err ) {console.log( err )}
+}
+
+
+
+
+
+
 async function validatePlant(plantId){
 	const query = `SELECT *
 	FROM \`default\`.plants

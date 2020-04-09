@@ -18,17 +18,17 @@ plants.getAll = async (req, res) => {
 
 plants.removePlant = async (req, res) => {
 	let query = `SELECT PlantId, PlantName, PlantType, WaterFreq, WaterNeeded
-	FROM \`default\`.plants WHERE PlantId = ${req.body['plantId']}`;
+	FROM \`default\`.plants WHERE PlantId = ${sql.con.escape(req.body['plantId'])}`;
 	try{
 		let data = await sql.con.query(query);
 		if(data.length){
 			query = `DELETE FROM \`default\`.userplants
-			WHERE PlantId = ${req.body['plantId']}`;
+			WHERE PlantId = ${sql.con.escape(req.body['plantId'])}`;
 			try{
 				await sql.con.query(query);
 			}
 			catch (err) { console.log(err) }
-			query = `DELETE FROM \`default\`.plants WHERE PlantId=${req.body['plantId']};`;
+			query = `DELETE FROM \`default\`.plants WHERE PlantId=${sql.con.escape(req.body['plantId'])};`;
 			try {
 				let data = await sql.con.query(query);
 				res.json("Success");
@@ -45,8 +45,8 @@ plants.removePlant = async (req, res) => {
 plants.registerPlant = async (req, res) => {
 	let query = `SELECT UserId, PlantId, PosX, PosY, LastWatered 
 	FROM \`default\`.userplants 
-	WHERE PosX = ${req.body['posX']} 
-	AND PosY = ${req.body['posY']};`;
+	WHERE PosX = ${sql.con.escape(req.body['posX'])} 
+	AND PosY = ${sql.con.escape(req.body['posY'])};`;
 	console.log(validatePlant(req.body['plantId']))
 	const validPlantId =  await validatePlant(req.body['plantId']);
 	console.log("Valid Plant Id: "+ validPlantId);
@@ -56,7 +56,7 @@ plants.registerPlant = async (req, res) => {
 		
 			if(!data.length) {
 				query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered) 
-				VALUES(\'${req.body['userId']}\', ${req.body['plantId']}, ${req.body['posX']}, ${req.body['posY']}, \'${req.body['lastWatered']}\');`;
+				VALUES(\'${sql.con.escape(req.body['userId'])}\', ${sql.con.escape(req.body['plantId'])}, ${sql.con.escape(req.body['posX'])}, ${sql.con.escape(req.body['posY'])}, \'${sql.con.escape(req.body['lastWatered'])}\');`;
 				try {
 					data = await sql.con.query(query);
 					res.json("Success");
@@ -77,16 +77,16 @@ plants.registerPlant = async (req, res) => {
 plants.removeUserPlant = async (req, res) => {
 	query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD 
 	FROM \`default\`.userplants 
-	WHERE UserId=${req.body['userId']}
-	AND PosX=${req.body['posX']}
-	AND PosY=${req.body['posY']}`;
+	WHERE UserId=${sql.con.escape(req.body['userId'])}
+	AND PosX=${sql.con.escape(req.body['posX'])}
+	AND PosY=${sql.con.escape(req.body['posY'])}`;
 	try {
 		let data = await sql.con.query(query);
 		if (data.length) {
 			query = `DELETE FROM \`default\`.userplants 
-			WHERE UserId=${req.body['userId']} 
-			AND PosX=${req.body['posX']} 
-			AND PosY=${req.body['posY']};`;
+			WHERE UserId=${sql.con.escape(req.body['userId'])} 
+			AND PosX=${sql.con.escape(req.body['posX'])} 
+			AND PosY=${sql.con.escape(req.body['posY'])};`;
 			try {
 				let data = await sql.con.query(query);
 				res.json("Success");
@@ -103,7 +103,7 @@ plants.removeUserPlant = async (req, res) => {
 plants.updateWater = async ( req, res ) => {
 	let query = `UPDATE \`default\`.userplants
 	SET LastWatered=\'${req.body['time']}\'
-	WHERE UserId=${req.body['userId']} AND PosX=${req.body['posX']} AND PosY=${req.body['posY']};`;
+	WHERE UserId=${sql.con.escape(req.body['userId'])} AND PosX=${sql.con.escape(req.body['posX'])} AND PosY=${sql.con.escape(req.body['posY'])};`;
 	try{
 		await sql.con.query(query);
 		res.json("Success")
@@ -119,7 +119,7 @@ plants.updateWater = async ( req, res ) => {
 async function validatePlant(plantId){
 	const query = `SELECT *
 	FROM \`default\`.plants
-	WHERE PlantId = ${plantId};`;
+	WHERE PlantId = ${sql.con.escape(plantId)};`;
 	try{
 		const data = await sql.con.query(query);
 		console.log("Data Length: " + data.length);

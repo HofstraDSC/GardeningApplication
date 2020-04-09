@@ -8,13 +8,14 @@ const myGarden = {};
  * Used to register for the app.  userName , discordId MUST be passed CASE SENSITIVE.
  */
 users.register = async (req,res) =>{
-	let query = `SELECT UserId, UserName, DiscordId FROM \`default\`.users WHERE UserName = "${req.body['userName']}" OR DiscordId = ${req.body['discordId']};`;
+	let query = `SELECT UserId, UserName, DiscordId FROM \`default\`.users WHERE UserName = "${sql.con.escape(req.body['userName'])}" OR DiscordId = ${sql.con.escape(req.body['discordId'])};`;
+	console.log(query);
 	try{
 		let data = await sql.con.query(query);
 		console.log(data.length);
 		console.log(data);
 		if(!data.length){
-			query = `INSERT INTO \`default\`.users (UserName, DiscordId) VALUES(\'${req.body['userName']}\', ${req.body['discordId']});`;
+			query = `INSERT INTO \`default\`.users (UserName, DiscordId) VALUES(\'${sql.con.escape(req.body['userName'])}\', ${sql.con.escape(req.body['discordId'])});`;
 			try{
 				data = await sql.con.query(query);
 				res.json("Success");
@@ -32,7 +33,8 @@ users.register = async (req,res) =>{
 users.myGarden = async (req,res) =>{
 	const query = `SELECT UserId, PlantId, PosX, PosY, LastWatered
 	FROM \`default\`.userplants
-	WHERE UserId = ${req.params['userId']}`;
+	WHERE UserId = ${sql.con.escape(req.params['userId'])}`;
+	console.log(query);
 	try{
 		const data = await sql.con.query(query);
 		res.json( { myGarden : data } );

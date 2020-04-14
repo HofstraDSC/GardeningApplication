@@ -33,7 +33,7 @@ users.register = async (req,res) =>{
 users.myGarden = async (req,res) =>{
 	const query = `SELECT UserId, PlantId, PosX, PosY, LastWatered
 	FROM \`default\`.userplants
-	WHERE UserId = ${sql.con.escape(req.params['userId'])}`;
+	WHERE DiscordId = ${sql.con.escape(req.params['discordId'])}`;
 	console.log(query);
 	try{
 		const data = await sql.con.query(query);

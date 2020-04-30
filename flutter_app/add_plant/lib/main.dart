@@ -9,7 +9,7 @@ Future<Plants> fetchPlants() async {
     print(Plants.fromJson(json.decode(response.body)));
     return Plants.fromJson(json.decode(response.body));
   } else {
-    print('Error');
+    print(response.statusCode);
     throw Exception('Failed to load album');
   }
 }
@@ -21,128 +21,51 @@ class Plants {
   factory Plants.fromJson(Map<String, dynamic> json) {
     return Plants(
       name: json['plants']['PlantName'],
-      type: json['plants']['PlantType'],
     );
   }
 }
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  MyApp({Key key}) : super(key: key);
+
   @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Future<Plants> futurePlants;
+
+  @override
+  void initState() {
+    super.initState();
+    futurePlants = fetchPlants();
+  }
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Add Plant',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: MyHomePage(title: 'Choose a plant to add to your garden!'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-
-class _MyHomePageState extends State<MyHomePage> {
-  Future<Plants> futurePlants;
-  @override
-  void initState() {
-    super.initState();
-    futurePlants = fetchPlants();
-  }
-
-  void pushFruit() {
-    Navigator.of(context).push(
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text('Fruit Page'),
-                ),
-                body: Center(
-                  child: FutureBuilder<Plants>(
-                    future: futurePlants,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(snapshot.data.name);
-                      } else if (snapshot.hasError) {
-                        print("${snapshot.error}");
-                        return Text("${snapshot.error}");
-                      }
-                      return CircularProgressIndicator();
-                    },
-                  )
-                )
-              );
-            }
-            )
-          );
-  }
-
-  void pushVegetable() {
-    Navigator.of(context).push(
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Scaffold(
-                  appBar: AppBar(
-                    title: Text('Vegetable Page'),
-                  ),
-                  body: Center(
-                      child: Text('This is the vegetable page')
-                  )
-              );
-            }
-        )
-    );
-  }
-
-  void pushFlower() {
-    Navigator.of(context).push(
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Scaffold(
-                  appBar: AppBar(
-                    title: Text('Flower Page'),
-                  ),
-                  body: Center(
-                      child: Text('This is the flower page')
-                  )
-              );
-            }
-        )
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-              child: Text('Add fruit'),
-              onPressed: pushFruit,
-            ),
-            RaisedButton(
-              child: Text('Add vegetable'),
-              onPressed: pushVegetable,
-            ),
-            RaisedButton(
-              child: Text('Add flower'),
-              onPressed: pushFlower,
-            )
-          ],
-        ),
+      home: Scaffold(
+          appBar: AppBar(
+            title: Text('Choose a plant to add to your garden!'),
+          ),
+          body: Center(
+              child: FutureBuilder<Plants>(
+                future: futurePlants,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data.name);
+                  } else if (snapshot.hasError) {
+                    print("${snapshot.error}");
+                    return Text("${snapshot.error}");
+                  }
+                  return CircularProgressIndicator();
+                },
+              )
+          )
       ),
     );
   }

@@ -5,7 +5,7 @@ var mysql = require('promise-mysql');
 const db = {};
 //local mysql db connection
 var connection = mysql.createConnection({
-    host     : '35.185.46.206',
+    host     : '35.237.100.8',
     user     : 'root',
     password : 'hofstradsc2020',
     database : ''

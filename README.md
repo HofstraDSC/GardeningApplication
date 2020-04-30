@@ -15,3 +15,10 @@ getmygarden - Retireive your garden and all the plants placed in it
 registerme - Register your discord to our gardening services
 getAllPlants - Retrieves a list of all available plants to add to your gardens.
 
+
+
+
+
+
+
+Greg - Implemented the getAllPlants command and the background task that checks whether a users plants need to be watered and notifies the garden owner.

@@ -8,7 +8,7 @@ const plants = {};
 plants.getAll = async (req, res) => {
 	const query = "SELECT * FROM `default`.plants";
 	try {
-		let data = await sql.con.query(query);
+		const data = await sql.con.query(query);
 		console.log(data[0]);
 		console.log(data);
 		res.json({ plants: data });
@@ -53,7 +53,7 @@ plants.registerPlant = async (req, res) => {
 	if(validPlantId){
 		try {
 			let data = await sql.con.query(query);
-		
+
 			if(!data.length) {
 				query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered) 
 				VALUES(\'${sql.con.escape(req.body['userId'])}\', ${sql.con.escape(req.body['plantId'])}, ${sql.con.escape(req.body['posX'])}, ${sql.con.escape(req.body['posY'])}, \'${sql.con.escape(req.body['lastWatered'])}\');`;
@@ -128,7 +128,7 @@ async function validatePlant(plantId){
 		else return false;
 	}
 	catch( err ) {console.log(err) }
-	
+
 }
 
 

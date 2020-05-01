@@ -5,6 +5,7 @@ Keep track of all of your gardening needs.
 This is an implemented discord bot to help with basic garden management. There is functionality to build a garden with plants and position them where you would like. These are all run through discord bot commands. 
 
 Link to add the Bot to your server: 
+https://discordapp.com/api/oauth2/authorize?client_id=690298166473785425&permissions=8&scope=bot
 
 
 - List of Commands - 

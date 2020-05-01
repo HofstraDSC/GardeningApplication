@@ -45,7 +45,7 @@ async def needs_water():
     
     for user in user_data['users']:
         #retrieve the user's garden
-        discord_user = = guild.get_member(user['UserId']);
+        discord_user = guild.get_member(user['UserId']);
         await discord_user.create_dm()
         user_garden_request = 'http://localhost:3000/user/myGarden/' + str(user['UserId'])
 

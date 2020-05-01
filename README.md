@@ -29,3 +29,7 @@ Link to add the Bot to your server:
 [John](https://github.com/jramirez5) - Created database tables and populated them with plants and their watering information.
 
 [Evan](https://github.com/evanb10) - Implemented the backend using the Express framwork for Javascripts.  
+
+
+
+\* *Because of the sensitivity of Discord application tokens the source code will not work for out implemented bot. Please either use the link to add the bot to new servers or create you own bot and fill in the TOKEN variable within a .env file.

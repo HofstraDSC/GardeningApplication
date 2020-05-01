@@ -32,8 +32,8 @@ async def needs_water():
     discord_user = guild.get_member(greg_id)
     await discord_user.create_dm()
     
-    plant_url = '/plant/all'
-    user_url = '/user/hasGarden'
+    plant_url = 'http://localhost:3000/plant/all'
+    user_url = 'http://localhost:3000/user/hasGarden'
     
     # sending get request and saving the response as response object 
     
@@ -46,7 +46,7 @@ async def needs_water():
     
     for user in user_data['users']:
         #retrieve the user's garden
-        user_garden_request = '/user/myGarden/' + str(user['UserId'])
+        user_garden_request = 'http://localhost:3000/user/myGarden/' + str(user['UserId'])
         user_garden = requests.get(url = user_garden_request)
         user_garden_data = user_garden.json()
 
@@ -74,7 +74,7 @@ async def needs_water():
     
 @bot.command(name='getAllPlants', help='Should return a message to the user thanking them')
 async def getAllPlants(ctx):
-    URL = "/plant/all"
+    URL = "http://localhost:3000/plant/all"
     r = requests.get(url=URL)
     data = r.json()["plants"]
 
@@ -89,4 +89,64 @@ async def log_out(ctx):
     await bot.logout()
 
     
+@bot.event
+async def on_ready():
+    print('It is time!');
+    print('I am running on ' + bot.user.name);
+    print('With the ID: ' + str(bot.user.id));
+
+@bot.command()
+async def registerme(ctx):
+    userName = ctx.message.author;
+    discordId = ctx.message.author.id;
+
+    data = {'userName':userName,
+            'discordId':discordId};
+    r = requests.post(url = "http://localhost:3000/user/register", data = data);
+    await userName.send(r.text);
+
+@bot.command()
+async def addplant(ctx, userId, plantId, posX, posY):
+    user = ctx.message.author;
+    data = {'userId':userId,
+            'plantId':plantId,
+            'posX':posX,
+            'posY':posY};
+    r = requests.post(url = "http://localhost:3000/plant/addPlant", data = data);
+    await user.send(r.text);
+
+@bot.command()
+async def harvestplant(ctx, userId, plantId, posX, posY):
+    user = ctx.message.author;
+
+    data = {'userId':userId,
+            'plantId':plantId,
+            'posX':posX,
+            'posY':posY};
+    r = requests.post(url = "http://localhost:3000/plant/harvest", data = data);
+    await user.send(r.text);
+
+@bot.command()
+async def getmygarden(ctx):
+    user = ctx.message.author;
+    discordId = ctx.message.author.id;
+
+    r = requests.get(url = "http://localhost:3000/user/myGarden/" + str(discordId));
+    data = r.json();
+    garden = data['myGarden'];
+    await user.send(garden);
+
+#@bot.command()
+#async def help(ctx):
+#    username = ctx.message.author;
+#    test = discord.Embed(colour = discord.Colour.green());
+#
+#    test.set_author(name = "Bot prefix = .");
+#    test.add_field(name = "registerme", value = "Registers you to create a garden", inline = False);
+#    test.add_field(name = "addplant", value = "Needs plant id, x position, and y position", inline = False);
+#    test.add_field(name = "harvestplant", value = "Needs plant id, x position, and y position", inline = False);
+#    test.add_field(name = "getmygarden", value = "Shows you your garden", inline = False);
+#    
+#    await username.send(embed = test);
+
 bot.run(TOKEN);

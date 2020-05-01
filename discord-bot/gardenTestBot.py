@@ -23,7 +23,7 @@ async def registerme(ctx):
 
     data = {'userName':userName,
             'discordId':discordId};
-    r = requests.post(url = "/user/register", data = data);
+    r = requests.post(url = "http://localhost:3000/user/register", data = data);
     await userName.send(r.text);
 
 @bot.command()
@@ -33,7 +33,7 @@ async def addplant(ctx, userId, plantId, posX, posY):
             'plantId':plantId,
             'posX':posX,
             'posY':posY};
-    r = requests.post(url = "/plant/addPlant", data = data);
+    r = requests.post(url = "http://localhost:3000/plant/addPlant", data = data);
     await user.send(r.text);
 
 @bot.command()
@@ -44,7 +44,7 @@ async def harvestplant(ctx, userId, plantId, posX, posY):
             'plantId':plantId,
             'posX':posX,
             'posY':posY};
-    r = requests.post(url = "/plant/harvest", data = data);
+    r = requests.post(url = "http://localhost:3000/plant/harvest", data = data);
     await user.send(r.text);
 
 @bot.command()
@@ -52,7 +52,7 @@ async def getmygarden(ctx):
     user = ctx.message.author;
     discordId = ctx.message.author.id;
 
-    r = requests.get(url = "/user/myGarden/" + str(discordId));
+    r = requests.get(url = "http://localhost:3000/user/myGarden/" + str(discordId));
     data = r.json();
     garden = data['myGarden'];
     await user.send(garden);

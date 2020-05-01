@@ -10,10 +10,10 @@ https://discordapp.com/api/oauth2/authorize?client_id=690298166473785425&permiss
 
 - List of Commands - 
 
-addplant - Add a plant to a specific location in your garden
-harvestplant - Remove a plant from a specific location in your garden
-getmygarden - Retreive your garden and all the plants placed in it
-registerme - Register your discord to our gardening services
+addPlant - Add a plant to a specific location in your garden
+harvestPlant - Remove a plant from a specific location in your garden
+getMyGarden - Retreive your garden and all the plants placed in it
+registerMe - Register your discord to our gardening services
 getAllPlants - Retrieves a list of all available plants to add to your gardens.
 
 

@@ -22,3 +22,5 @@ getAllPlants - Retrieves a list of all available plants to add to your gardens.
 Gillian - Implemented addplant, harvestplant, registerme, and getmygarden.
 
 Greg - Implemented the getAllPlants command and the background task that checks whether a users plants need to be watered and notifies the garden owner.
+
+John - Created database tables and populated them with plants and their watering information. 

@@ -29,6 +29,7 @@ async def on_ready():
 @tasks.loop(seconds = 10)
 async def needs_water():
     guild = discord.utils.get(bot.guilds, name=GUILD)
+     
     
     plant_url = 'http://localhost:3000/plant/all'
     user_url = 'http://localhost:3000/user/hasGarden'
@@ -44,9 +45,10 @@ async def needs_water():
     
     for user in user_data['users']:
         #retrieve the user's garden
-        discord_user = user['UserId'];
+        discord_user = = guild.get_member(user['UserId']);
         await discord_user.create_dm()
         user_garden_request = 'http://localhost:3000/user/myGarden/' + str(user['UserId'])
+
     
         user_garden = requests.get(url = user_garden_request)
         user_garden_data = user_garden.json()

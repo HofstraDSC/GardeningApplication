@@ -43,10 +43,14 @@ plants.removePlant = async (req, res) => {
 }
 
 plants.registerPlant = async (req, res) => {
+	let id_query = `SELECT UserId FROM \`default\`.users WHERE DiscordId = '${req.body.discordId})'`;
+	let id_res = await sql.con.query(id_query);
+	let user_id = id_res[0].UserId;
 	let query = `SELECT UserId, PlantId, PosX, PosY, LastWatered 
-	FROM \`default\`.userplants 
-	WHERE PosX = ${sql.con.escape(req.body['posX'])} 
-	AND PosY = ${sql.con.escape(req.body['posY'])};`;
+		FROM \`default\`.userplants 
+		WHERE UserId=${sql.con.escape(user_id)}
+		AND PosX=${sql.con.escape(req.body['posX'])}
+		AND PosY=${sql.con.escape(req.body['posY'])}`;
 	console.log(validatePlant(req.body['plantId']))
 	const validPlantId =  await validatePlant(req.body['plantId']);
 	console.log("Valid Plant Id: "+ validPlantId);
@@ -56,7 +60,7 @@ plants.registerPlant = async (req, res) => {
 
 			if(!data.length) {
 				query = `INSERT INTO \`default\`.userplants (UserId, PlantId, PosX, PosY, LastWatered) 
-				VALUES(\'${sql.con.escape(req.body['userId'])}\', ${sql.con.escape(req.body['plantId'])}, ${sql.con.escape(req.body['posX'])}, ${sql.con.escape(req.body['posY'])}, \'${sql.con.escape(req.body['lastWatered'])}\');`;
+				VALUES(\'${sql.con.escape(user_id)}\', ${sql.con.escape(req.body['plantId'])}, ${sql.con.escape(req.body['posX'])}, ${sql.con.escape(req.body['posY'])}, NOW());`;
 				try {
 					data = await sql.con.query(query);
 					res.json("Success");
@@ -75,18 +79,21 @@ plants.registerPlant = async (req, res) => {
 }
 
 plants.removeUserPlant = async (req, res) => {
-	query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD 
-	FROM \`default\`.userplants 
-	WHERE UserId=${sql.con.escape(req.body['userId'])}
-	AND PosX=${sql.con.escape(req.body['posX'])}
-	AND PosY=${sql.con.escape(req.body['posY'])}`;
+	let id_query = `SELECT UserId FROM \`default\`.users WHERE DiscordId = '${req.body.discordId})'`;
+	let id_res = await sql.con.query(id_query);
+	let user_id = id_res[0].UserId;
+	let query = `SELECT UserId, PlantId, PosX, PosY, LastWatereD 
+		FROM \`default\`.userplants 
+		WHERE UserId=${sql.con.escape(user_id)}
+		AND PosX=${sql.con.escape(req.body['posX'])}
+		AND PosY=${sql.con.escape(req.body['posY'])}`;
 	try {
 		let data = await sql.con.query(query);
 		if (data.length) {
 			query = `DELETE FROM \`default\`.userplants 
-			WHERE UserId=${sql.con.escape(req.body['userId'])} 
-			AND PosX=${sql.con.escape(req.body['posX'])} 
-			AND PosY=${sql.con.escape(req.body['posY'])};`;
+				WHERE UserId=${sql.con.escape(user_id)} 
+				AND PosX=${sql.con.escape(req.body['posX'])} 
+				AND PosY=${sql.con.escape(req.body['posY'])};`;
 			try {
 				let data = await sql.con.query(query);
 				res.json("Success");

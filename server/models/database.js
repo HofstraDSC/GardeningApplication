@@ -8,7 +8,9 @@ var connection = mysql.createConnection({
     host     : '35.237.100.8',
     user     : 'root',
     password : 'hofstradsc2020',
-    database : ''
+    database : '',
+    supportBigNumbers: true,
+    bigNumberStrings: true
 });
 
 connection.then((con) =>{

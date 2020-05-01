@@ -1,0 +1,12 @@
+[Unit]
+After=network.target
+
+[Service]
+Environment=NODE_PORT=3001
+Type=simple
+User=hofstradsc
+ExecStart=/usr/bin/python3  /home/hofstradsc/apps/GardeningApplication/discord-bot/bot.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,8 +1,12 @@
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const indexRouter = express.Router();
 
-router.get('/', function(req, res){
-	res.render('add');
+// indexRouter.get('/', function(req, res){
+// 	res.render('add'); 
+// });
+
+indexRouter.get('/',(req,res)=>{
+	res.send('Hello World');
 });
 
-module.exports = router;
+module.exports = indexRouter;

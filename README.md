@@ -32,4 +32,4 @@ Link to add the Bot to your server:
 
 
 
-/* *Because of the sensitivity of Discord application tokens the source code will not work for out implemented bot. Please either use the link to add the bot to new servers or create you own bot and fill in the TOKEN variable within a .env file.
+*Because of the sensitivity of Discord application tokens the source code will not work for out implemented bot. Please either use the link to add the bot to new servers or create you own bot and fill in the TOKEN variable within a .env file.

@@ -3,24 +3,36 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-Future<Plants> fetchPlants() async {
+Future<List<Plant>> fetchPlants() async {
   final response = await http.get('http://35.236.238.30:3000/plant/all');
   if(response.statusCode == 200) {
-    print(Plants.fromJson(json.decode(response.body)));
-    return Plants.fromJson(json.decode(response.body));
+    List responseJson = json.decode(response.body);
+    return responseJson.map((m) => new Plant.fromJson(m)).toList();
   } else {
     print(response.statusCode);
     throw Exception('Failed to load album');
   }
 }
 
-class Plants {
+class Plant{
   final String name;
-  final String type;
-  Plants({this.name, this.type});
+  Plant({this.name});
+  factory Plant.fromJson(Map<String, dynamic> json) {
+    return Plant(
+      name: json['PlantName'],
+    );
+  }
+}
+
+class Plants {
+  final List<Plant> plants;
+  Plants({this.plants});
   factory Plants.fromJson(Map<String, dynamic> json) {
+    var list = json['plants'] as List;
+    print(list.runtimeType);
+    List<Plant> plantsList = list.map((i) => Plant.fromJson(i)).toList();
     return Plants(
-      name: json['plants']['PlantName'],
+      plants: plantsList,
     );
   }
 }
@@ -35,7 +47,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<Plants> futurePlants;
+  Future<List<Plant>> futurePlants;
 
   @override
   void initState() {
@@ -53,11 +65,14 @@ class _MyAppState extends State<MyApp> {
             title: Text('Choose a plant to add to your garden!'),
           ),
           body: Center(
-              child: FutureBuilder<Plants>(
+              child: FutureBuilder<List<Plant>>(
                 future: futurePlants,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return Text(snapshot.data.name);
+                    List<Plant> theplants = snapshot.data;
+                    return new ListView(
+                      children: theplants.map((plant) => Text(plant.name)).toList(),
+                    );
                   } else if (snapshot.hasError) {
                     print("${snapshot.error}");
                     return Text("${snapshot.error}");

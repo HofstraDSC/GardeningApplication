@@ -1,6 +1,6 @@
-# flutter_app
+# dscproject
 
-A new Flutter project.
+A new Flutter application.
 
 ## Getting Started
 
